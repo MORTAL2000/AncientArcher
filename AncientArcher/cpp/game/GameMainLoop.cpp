@@ -1,10 +1,9 @@
 #include <AAEngine.h>
-
 #include "Game.h"
-
+#include "../pckgs/firstPersonPlayer/Movement.h"
+#include "../pckgs/masterRenderer/MasterRenderer.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "../pckgs/firstPersonPlayer/Movement.h"
 #include <glm/gtc/type_ptr.hpp>
 extern Movement movedir;
 extern Camera camera;
@@ -23,11 +22,11 @@ void Game::mainLoop() {
 
     // process player movement and collision
     if (movedir.isMoving()) {
-      player->processCommands( deltaTime, primativeRenderer->getEntites() );
+      player->processCommands(deltaTime, primativeRenderer->getEntites());
       player->movePlayerLight(*camera.getPosition(), primativeRenderer->getShader());
     }
 
-    masterRenderer.update(primativeRenderer, skyboxRenderer, deltaTime);
+    masterRenderer.update(primativeRenderer, textRenderer, skyboxRenderer, deltaTime);
 
     glfwPollEvents();
   }
