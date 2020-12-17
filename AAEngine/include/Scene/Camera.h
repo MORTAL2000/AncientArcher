@@ -42,40 +42,40 @@ class Camera
 {
 public:
 	Camera(int width, int height);
-
-	void updateCameraVectors();
+	void UpdateCameraVectors();
 
 	// setters
-	void setToPerspective() noexcept;
-	void setCurrentPosition(glm::vec3 pos);
-	void setCurrentPitch(float pitch);
-	void setCurrentYaw(float yaw);
-	void shiftCurrentPosition(const glm::vec3& offset);
-	void shiftYawAndPitch(float yawOffset, float pitchOffset);
+	void SetViewportSize(int w, int h);
+	void SetToPerspective() noexcept;
+	void SetCurrentPosition(glm::vec3 pos);
+	void SetCurrentPitch(float pitch);
+	void SetCurrentYaw(float yaw);
+	void ShiftCurrentPosition(const glm::vec3& offset);
+	void ShiftYawAndPitch(float yawOffset, float pitchOffset);
 
 	// experimental
-	void setToOrtho() noexcept;
-	void setOrthoFieldSize(float left, float right, float bottom, float top) noexcept;
-	void setOrthoFieldSize(glm::vec4 lrbt) noexcept;
+	void SetToOrtho() noexcept;
+	void SetOrthoFieldSize(float left, float right, float bottom, float top) noexcept;
+	void SetOrthoFieldSize(glm::vec4 lrbt) noexcept;
+	void SetMaxRenderDistance(float distance) noexcept;
+	void ResetViewportVars();
 
 	// getters
-	const glm::vec3& getLocation() const noexcept;
-	glm::mat4 getViewMatrix() const;
-	glm::mat4 getProjectionMatrix() const;
-	const glm::vec3* getPosition() const noexcept;
-	const glm::vec3* getFront() const noexcept;
-	const glm::vec3* getRight() const noexcept;
-	float getYaw() const noexcept;
-	float getPitch() const noexcept;
-	float getRenderDistance() const noexcept;
-	const int& getID() const noexcept;
+	const glm::vec3& GetLocation() const noexcept;
+	glm::mat4        GetViewMatrix() const;
+	glm::mat4        GetProjectionMatrix() const;
+	const glm::vec3* GetPosition() const noexcept;
+	const glm::vec3* GetFront() const noexcept;
+	const glm::vec3* GetRight() const noexcept;
+	float            GetYaw() const noexcept;
+	float            GetPitch() const noexcept;
+	float            GetRenderDistance() const noexcept;
 
-	friend class AncientArcher;
+	const int&       GetID() const noexcept;
 
 private:
-
-	int              mWidth;
-	int              mHeight;
+	int              mViewportWidth;
+	int              mViewportHeight;
 	glm::vec3        mFront;
 	glm::vec3        mRight;
 	glm::vec3        mUp;
@@ -89,8 +89,5 @@ private:
 	int              mUniqueViewportID;
 	RenderProjection mRenderProjection;
 
-	void resetViewportVars();
-
-	void setMaxRenderDistance(float distance) noexcept;
 };
 } // end namespace AA

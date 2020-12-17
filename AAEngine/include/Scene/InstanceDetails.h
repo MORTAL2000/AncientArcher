@@ -33,14 +33,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 #include <glm\ext\vector_float3.hpp>
 #include "ColliderSphere.h"
+#include "OGLShader.h"
 namespace AA
 {
 struct InstanceDetails
 {
 	void updateModelMatrix();
 
-	InstanceDetails();
-	InstanceDetails(glm::vec3 scale, glm::vec3 rot, glm::vec3 transl);
+	InstanceDetails(std::shared_ptr<OGLShader>& shader, std::shared_ptr<Camera>& cam);
+
+	InstanceDetails(std::shared_ptr<OGLShader>& shader, std::shared_ptr<Camera>& cam, glm::vec3 scale, glm::vec3 rot, glm::vec3 transl);
+
+	//InstanceDetails(int shader, int cameraid);
+	//InstanceDetails(int shader, int cameraid, glm::vec3 scale, glm::vec3 rot, glm::vec3 transl);
 
 	// updateModelMatrix uses these
 	glm::vec3 Scale = glm::vec3(1);
@@ -52,5 +57,9 @@ struct InstanceDetails
 
 	// for if the unit has collision
 	ColliderSphere* mColliderSphere = nullptr;
+
+	std::shared_ptr<OGLShader> mShader;
+	std::shared_ptr<Camera> mCamera;
+
 };
 }  // end namespace AA

@@ -35,18 +35,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace AA
 {
+// todo: these need tested in ortho mode one day
 enum class STANDARDMOUSEZEROS { DEFAULT, TOP_LEFT_0_to_1, BOT_LEFT_0_to_1, TOP_LEFT_FULL_RANGE, BOT_LEFT_FULL_RANGE };
 
 class Controls
 {
 public:
 
-	//static Controls* Get();
-
 	float getFPPMouseSensitivity() const noexcept;
 	void setFPPMouseSensitivity(float sensitivity) noexcept;
 
-	friend class Display;      // for access to mouseMovement and mouseScrollWheelMovement
 	friend class AncientArcher;         // for access to Input
 
 protected:

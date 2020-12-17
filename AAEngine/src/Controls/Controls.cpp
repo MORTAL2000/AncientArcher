@@ -37,7 +37,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace AA
 {
-
 float Controls::getFPPMouseSensitivity() const noexcept
 {
 	return mFPPMouseSensitivity;

@@ -46,9 +46,9 @@ namespace AA
 class GameObject
 {
 public:
-
-	GameObject(const char* path, int camId, int shadId);
-	GameObject(const char* path, int camId, int shadId, std::vector<InstanceDetails> details);
+	// public constructors
+	GameObject(const char* path, std::shared_ptr<OGLShader>& shad, std::shared_ptr<Camera>& cam);
+	GameObject(const char* path, std::vector<InstanceDetails> details);
 
 	// getters
 	const glm::vec3& getLocation() const;
@@ -57,16 +57,16 @@ public:
 	const glm::vec3& getRotation(int which) const;
 	int getModelMatrix(const int& which, glm::mat4& out_mat4) const;
 	glm::mat4 getModelMatrix(const int& which);
-	const int getShaderId() const noexcept;
-	const int getCameraId() const noexcept;
+	const int getShaderId(const int& which) const;
+	const int getCameraId(const int& which) const;
 	const int getObjectId() const noexcept;
 	const std::size_t getInstanceCount() const noexcept;
 	const ColliderSphere* getColliderSphere(uint32_t which = 0) const;
 	bool isSingleInstance() const;
 
 	// setters
-	void setCamera(int id) noexcept;
-	void setShader(int id) noexcept;
+	void SetShader(int which_instance, std::shared_ptr<OGLShader>& shader);
+	void SetCamera(int which_instance, std::shared_ptr<Camera>& cam);
 	void setColliderSphere(const glm::vec3& center, const float& radius, uint32_t which = 0, bool overwrite = true) noexcept;
 
 	void setScale(glm::vec3 amt, int which);
@@ -91,14 +91,12 @@ public:
 private:
 
 	// only AncientArcher can call draw on Objects
-	void draw(const OGLShader& modelShader);
+	void draw(/*const OGLShader& modelShader*/);
 
-	int mCameraID = -1;
-	int mShaderID = -1;
 	int mObjectID = -1;
 
 	std::vector<MeshDrawInfo> mMeshes;
-	std::vector<InstanceDetails> mInstanceDetails;  // for instancing multiple objects, sized to the number of this object in our world
+	std::vector<InstanceDetails> mInstanceDetails;  // for cpu instancing multiple objects, sized to the number of this object in our world
 
 	// helpers
 	void updateModelMatrix(int which);

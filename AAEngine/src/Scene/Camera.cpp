@@ -68,12 +68,12 @@ Camera::Camera(int width, int height)
 	mRight = glm::normalize(mRight);
 	mUp = glm::normalize(mUp);
 
-	//updateCameraVectors();
-	mWidth = width;
-	mHeight = height;
+	//UpdateCameraVectors();
+	mViewportWidth = width;
+	mViewportHeight = height;
 }
 
-void Camera::updateCameraVectors()
+void Camera::UpdateCameraVectors()
 {
 	glm::vec3 front;
 	front.x = cos(glm::radians(mYaw)) * cos(glm::radians(mPitch));
@@ -85,7 +85,7 @@ void Camera::updateCameraVectors()
 }
 
 // same as default constructor but doesn't touch the uniqueId's
-void Camera::resetViewportVars()
+void Camera::ResetViewportVars()
 {
 	mPosition = glm::vec3(0);
 	mFieldOfView = 60.f;
@@ -108,12 +108,18 @@ void Camera::resetViewportVars()
 	mUp = glm::normalize(mUp);
 }
 
-void Camera::setToPerspective() noexcept
+void Camera::SetViewportSize(int w, int h)
+{
+	mViewportWidth = w;
+	mViewportHeight = h;
+}
+
+void Camera::SetToPerspective() noexcept
 {
 	mRenderProjection = RenderProjection::PERSPECTIVE;
 }
 
-void Camera::setToOrtho() noexcept
+void Camera::SetToOrtho() noexcept
 {
 	//Camera::Get()->setOrthoFieldSize(
 	//  glm::vec4(
@@ -125,29 +131,29 @@ void Camera::setToOrtho() noexcept
 	mRenderProjection = RenderProjection::ORTHO;
 }
 
-void Camera::setOrthoFieldSize(float left, float right, float bottom, float top) noexcept
+void Camera::SetOrthoFieldSize(float left, float right, float bottom, float top) noexcept
 {
 	mOrthoFieldSize = glm::vec4(left, right, bottom, top);
 }
 
-void Camera::setOrthoFieldSize(glm::vec4 lrbt) noexcept
+void Camera::SetOrthoFieldSize(glm::vec4 lrbt) noexcept
 {
 	mOrthoFieldSize = lrbt;
 }
 
-void Camera::setMaxRenderDistance(float distance) noexcept
+void Camera::SetMaxRenderDistance(float distance) noexcept
 {
 	mMaxRenderDistance = distance;
 	//updateViewport();
 }
 
-void Camera::setCurrentPosition(glm::vec3 pos)
+void Camera::SetCurrentPosition(glm::vec3 pos)
 {
 	mPosition = pos;
-	updateCameraVectors();
+	//UpdateCameraVectors();
 }
 
-void Camera::setCurrentPitch(float pitch)
+void Camera::SetCurrentPitch(float pitch)
 {
 	mPitch = pitch;
 	if (mPitch > 89.9f)
@@ -158,22 +164,22 @@ void Camera::setCurrentPitch(float pitch)
 	{
 		mPitch = -89.9f;
 	}
-	updateCameraVectors();
+	UpdateCameraVectors();
 }
 
-void Camera::setCurrentYaw(float yaw)
+void Camera::SetCurrentYaw(float yaw)
 {
 	mYaw = yaw;
-	updateCameraVectors();
+	UpdateCameraVectors();
 }
 
-void Camera::shiftCurrentPosition(const glm::vec3& offset)
+void Camera::ShiftCurrentPosition(const glm::vec3& offset)
 {
 	mPosition += offset;
-	updateCameraVectors();
+	UpdateCameraVectors();
 }
 
-void Camera::shiftYawAndPitch(float yawOffset, float pitchOffset)
+void Camera::ShiftYawAndPitch(float yawOffset, float pitchOffset)
 {
 	mYaw += yawOffset;
 	mPitch += pitchOffset;
@@ -185,19 +191,19 @@ void Camera::shiftYawAndPitch(float yawOffset, float pitchOffset)
 	{
 		mPitch = -89.9f;
 	}
-	updateCameraVectors();
+	UpdateCameraVectors();
 }
 
-glm::mat4 Camera::getViewMatrix() const
+glm::mat4 Camera::GetViewMatrix() const
 {
 	return glm::lookAt(mPosition, mPosition + mFront, mUp);
 }
 
 // returns a projection matrix based on the window width and height and the perspective.
-glm::mat4 Camera::getProjectionMatrix() const
+glm::mat4 Camera::GetProjectionMatrix() const
 {
 	// todo: other ways of adjusting camera viewport
-	//const float screen_width = static_cast<float>(mWidth);
+	//const float screen_width = static_cast<float>(mViewportWidth);
 	//const float screen_height = static_cast<float>(Display::Get()->GetWindowHeight());
 //
 //	if (screen_width <= 0 || screen_height <= 0)
@@ -215,11 +221,11 @@ glm::mat4 Camera::getProjectionMatrix() const
 	switch (mRenderProjection)
 	{
 	case RenderProjection::PERSPECTIVE:
-		{
-		float aspectRatio = static_cast<float>(mWidth)/static_cast<float>(mHeight);
+	{
+		float aspectRatio = static_cast<float>(mViewportWidth) / static_cast<float>(mViewportHeight);
 		projection = glm::perspective(glm::radians(mFieldOfView), aspectRatio, 0.0167f, mMaxRenderDistance);
-		}
-		break;
+	}
+	break;
 	case RenderProjection::ORTHO:
 		// todo: test and fix ortho
 		//projection = glm::ortho(
@@ -238,42 +244,42 @@ glm::mat4 Camera::getProjectionMatrix() const
 	return projection;
 }
 
-const glm::vec3* Camera::getPosition() const noexcept
+const glm::vec3* Camera::GetPosition() const noexcept
 {
 	return &mPosition;
 }
 
-const glm::vec3* Camera::getFront() const noexcept
+const glm::vec3* Camera::GetFront() const noexcept
 {
 	return &mFront;
 }
 
-const glm::vec3* Camera::getRight() const noexcept
+const glm::vec3* Camera::GetRight() const noexcept
 {
 	return &mRight;
 }
 
-float Camera::getYaw() const noexcept
+float Camera::GetYaw() const noexcept
 {
 	return mYaw;
 }
 
-float Camera::getPitch() const noexcept
+float Camera::GetPitch() const noexcept
 {
 	return mPitch;
 }
 
-float Camera::getRenderDistance() const noexcept
+float Camera::GetRenderDistance() const noexcept
 {
 	return mMaxRenderDistance;
 }
 
-const int& Camera::getID() const noexcept
+const int& Camera::GetID() const noexcept
 {
 	return mUniqueViewportID;
 }
 
-const glm::vec3& Camera::getLocation() const noexcept
+const glm::vec3& Camera::GetLocation() const noexcept
 {
 	return mPosition;
 }

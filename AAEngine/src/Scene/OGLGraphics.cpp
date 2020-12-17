@@ -56,47 +56,47 @@ OGLGraphics::OGLGraphics() {};
  *  @param[in] details about instances of the mesh to also render.
  *  @param[in] shader to use for mesh rendering pipeline.
  */
-void OGLGraphics::Render(const std::vector<MeshDrawInfo>& meshes, const std::vector<InstanceDetails>& details, const OGLShader& modelShader)
+void OGLGraphics::Render(const std::vector<MeshDrawInfo>& meshes, const std::vector<InstanceDetails>& details)
 {
 	// turn on depth test in case something else turned it off
 	glEnable(GL_DEPTH_TEST);
 
-	// go through all meshes in the this
-	for (auto m : meshes)
+	// draw all the instances with their differing model matrices and shaders
+	for (const auto& d : details)
 	{
-		// go through all textures in this mesh
-		uint32_t i = 0;
-		for (auto textures : m.textureDrawIds)
+		// if different shader, switch to it, update it
+		static std::shared_ptr<OGLShader> last_shader;
+		if (last_shader != d.mShader)  // first instance should always set this to start
 		{
-			// activate each texture
-			glActiveTexture(GL_TEXTURE0 + i);
-			// get the texture type
-			const std::string texType = textures.second;
-
-			//might not need shader.use() here
-			//modelShader.use();
-
-			// tell opengl to bind the texture to a model shader uniform var
-			glUniform1i(glGetUniformLocation(modelShader.getID(), ("material." + texType).c_str()), i);
-			glBindTexture(GL_TEXTURE_2D, textures.first);
-			i++;
+			last_shader = d.mShader;
+			last_shader->use();
+			last_shader->setMat4("model", d.ModelMatrix);
+			for (const auto& m : meshes)
+			{
+				uint32_t i = 0;
+				for (const auto& texs : m.textureDrawIds)
+				{
+					glActiveTexture(GL_TEXTURE0 + i);
+					const std::string tex_type = texs.second;
+					glUniform1i(glGetUniformLocation(last_shader->GetID(), ("material." + tex_type).c_str()), i);
+					glBindTexture(GL_TEXTURE_2D, texs.first);
+				}
+				glBindVertexArray(m.vao);
+				glDrawElements(GL_TRIANGLES, m.numElements, GL_UNSIGNED_INT, nullptr);
+			}
 		}
-
-		// bind vertex
-		glBindVertexArray(m.vao);
-		//const GLsizei count = (GLsizei)m.elements.size();
-
-		// draw all the instances with their differing model matrices
-		for (const auto& instance : details)
+		else // same shader
 		{
-			modelShader.setMat4("model", instance.ModelMatrix);
-			glDrawElements(GL_TRIANGLES, m.numElements, GL_UNSIGNED_INT, nullptr);
+			last_shader->setMat4("model", d.ModelMatrix);
+			for (const auto& m : meshes)
+			{
+				glBindVertexArray(m.vao);
+				glDrawElements(GL_TRIANGLES, m.numElements, GL_UNSIGNED_INT, nullptr);
+			}
 		}
 	}
 
-	// unbind vert array
-	glBindVertexArray(0);
-	// reset to first texture
-	glActiveTexture(GL_TEXTURE0);
+	glBindVertexArray(0);          // unbind vert array
+	glActiveTexture(GL_TEXTURE0);  // reset to first texture
 }
 }  // end namespace AA

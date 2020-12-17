@@ -287,7 +287,7 @@ void Display::initGLFW() noexcept
 #endif
 }
 
-void Display::initFromEngine()
+void Display::InitWindow()
 {
 	initGLFW();
 

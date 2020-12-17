@@ -35,7 +35,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 #include <string>
 #include <iomanip>
+#ifdef _DEBUG
 #include <iostream>
+#endif
 #include <utility>
 #include "../include/AncientArcher.h"
 #include "../include/Controls/Controls.h"
@@ -50,7 +52,14 @@ AncientArcher* AncientArcher::Get()
 
 int AncientArcher::Run()
 {
-	begin();	while (!glfwWindowShouldClose(mWindow)) { deltaUpdate();		render(); }	teardown();	return 0;
+	begin();
+	while (!glfwWindowShouldClose(mWindow))
+	{
+		deltaUpdate();
+		render();
+	}
+	teardown();
+	return 0;
 }
 
 void AncientArcher::teardown()
@@ -63,16 +72,16 @@ void AncientArcher::teardown()
 
 AncientArcher::AncientArcher()
 {
-	initEngine();
+	InitEngine();
 }
 
-const Camera& AncientArcher::GetCamera(int camId) const
+const Camera* AncientArcher::GetCamera(int camId) const
 {
 	for (const auto& cam : mCameras)
 	{
-		if (cam.getID() == camId)
+		if (cam->GetID() == camId)
 		{
-			return cam;
+			return cam.get();
 		}
 	}
 
@@ -82,13 +91,13 @@ const Camera& AncientArcher::GetCamera(int camId) const
 	exit(-1);
 }
 
-Camera& AncientArcher::GetCamera(int camId)
+Camera* AncientArcher::GetCamera(int camId)
 {
 	for (auto& cam : mCameras)
 	{
-		if (cam.getID() == camId)
+		if (cam->GetID() == camId)
 		{
-			return cam;
+			return cam.get();
 		}
 	}
 
@@ -97,13 +106,13 @@ Camera& AncientArcher::GetCamera(int camId)
 	exit(-1);
 }
 
-const OGLShader& AncientArcher::GetShader(int shadId) const
+const OGLShader* AncientArcher::GetShader(int shadId) const
 {
 	for (const auto& shad : mShaders)
 	{
-		if (shad.getID() == shadId)
+		if (shad->GetID() == shadId)
 		{
-			return shad;
+			return shad.get();
 		}
 	}
 
@@ -112,13 +121,13 @@ const OGLShader& AncientArcher::GetShader(int shadId) const
 	exit(-1);
 }
 
-OGLShader& AncientArcher::GetShader(int shadId)
+OGLShader* AncientArcher::GetShader(int shadId)
 {
 	for (auto& shad : mShaders)
 	{
-		if (shad.getID() == shadId)
+		if (shad->GetID() == shadId)
 		{
-			return shad;
+			return shad.get();
 		}
 	}
 
@@ -160,47 +169,32 @@ GameObject& AncientArcher::GetGameObject(int objId)
 
 int AncientArcher::AddCamera(int w, int h)
 {
-	Camera tmpCam(w, h);
-	const int return_id = tmpCam.getID();
-
-	mCameras.push_back(tmpCam);
-
-	return return_id;
+	mCameras.emplace_back(std::make_shared<Camera>(w, h));
+	return mCameras.back()->GetID();
 }
 
 int AncientArcher::AddShader(const char* vert, const char* frag, const bool isPath)
 {
-	mShaders.emplace_back(OGLShader(vert, frag, isPath));
-	return mShaders.back().getID();
+	mShaders.emplace_back(std::make_shared<OGLShader>(vert, frag, isPath));
+	return mShaders.back()->GetID();
 }
 
 int AncientArcher::AddShader(const SHADERTYPE& type)
 {
-	mShaders.emplace_back(OGLShader(type));
-	return mShaders.back().getID();
+	mShaders.emplace_back(std::make_shared<OGLShader>(type));
+	return mShaders.back()->GetID();
 }
 
 int AncientArcher::AddObject(const char* path, int camId, int shadId)
 {
-	GameObject tmpObject(path, camId, shadId);
-	const int return_id = tmpObject.getObjectId();
-
-	mGameObjects.push_back(tmpObject);
-
-	return return_id;
+	mGameObjects.emplace_back(GameObject(path, mShaders.at(shadId), mCameras.at(camId)));
+	return mGameObjects.back().getObjectId();
 }
 
-int AncientArcher::AddObject(const char* path, int cam_id, int shad_id, const std::vector<InstanceDetails>& details)
+int AncientArcher::AddObject(const char* path, const std::vector<InstanceDetails>& details)
 {
-	// todo: optimize. check if it is an object we already have loaded and use it again if so
-
-	GameObject tmpObject(path, cam_id, shad_id, details);
-
-	const int return_id = tmpObject.getObjectId();
-
-	mGameObjects.push_back(tmpObject);
-
-	return return_id;
+	mGameObjects.emplace_back(GameObject(path, details));
+	return mGameObjects.back().getObjectId();
 }
 
 void AncientArcher::SetSkybox(const std::shared_ptr<Skybox>& skybox) noexcept
@@ -280,6 +274,14 @@ uint32_t AncientArcher::AddToOnTeardown(void(*function)())
 	return next_teardown_id;
 }
 
+uint32_t AncientArcher::AddToOnWindowChanged(void(*function)(Camera&))
+{
+	static uint32_t next_window_changed_id = 0;
+	next_window_changed_id++;
+	onWindowChanged.emplace(next_window_changed_id, function);
+	return next_window_changed_id;
+}
+
 bool AncientArcher::RemoveFromOnBegin(uint32_t r_id)
 {
 	return static_cast<bool>(onBegin.erase(r_id));
@@ -325,6 +327,11 @@ bool AncientArcher::RemoveFromTeardown(uint32_t r_id)
 	return static_cast<bool>(onTearDown.erase(r_id));
 }
 
+bool AncientArcher::RemoveFromOnWindowChanged(uint32_t r_id)
+{
+	return static_cast<bool>(onWindowChanged.erase(r_id));
+}
+
 void AncientArcher::SetCursorToEnabled(bool isHardwareRendered)
 {
 	if (isHardwareRendered)
@@ -337,77 +344,25 @@ void AncientArcher::SetCursorToEnabled(bool isHardwareRendered)
 	}
 }
 
-//void AncientArcher::SetCursorToDisabled()
-//{
-//	SetCursorToDisabled();
-//}
-//void AncientArcher::SetToPerspectiveMouseHandling()
-//{
-//	SetCurorPosToPerspectiveCalc();
-//}
-//void AncientArcher::SetToStandardMouseHandling()
-//{
-//	SetCurorPosToStandardCalc();
-//}
-//void AncientArcher::SetWindowTitle(const char* title)
-//{
-//	SetWindowTitle(title);
-//}
-//void AncientArcher::SetWindowSize(const char to, int width, int height, bool center)
-//{
-//	SetWindowSize(to);
-//	switch (to)
-//	{
-//	case 'f':
-//	case 'm':
-//	case 'b':
-//		return;
-//	default:
-//		break;
-//	}
-//
-//	assert(width > 0);
-//	assert(height > 0);
-//
-//	if (center)
-//	{
-//		SetWindowSize(width, height, center);
-//	}
-//	else
-//	{
-//		SetWindowSize(width, height, center);
-//	}
-//}
+void AncientArcher::SetToFPPMouseHandling() noexcept
+{
+	SetCursorToDisabled();
+	SetCurorPosToPerspectiveCalc();
+}
 
 void AncientArcher::SetWindowPos(int xpos, int ypos)
 {
 	SetWindowSize(0, 0, xpos, ypos);
 }
 
-void AncientArcher::SetMaxRenderDistance(int camId, float amt) noexcept
+void AncientArcher::SetProjectionMatrix(const OGLShader* shader, const Camera& cam)
 {
-	for (auto& cam : mCameras)
-	{
-		if (cam.getID() == camId)
-		{
-			cam.setMaxRenderDistance(amt);
-			return;
-		}
-	}
-
-	// if code gets here there is an error, camId not found
-	//std::cout << "cam not found for id [" << camId << "].\n";
-}
-
-void AncientArcher::SetProjectionMatrix(int shadId, int camId)
-{
-	GetShader(shadId).use();
-	GetShader(shadId).setMat4("projection", GetCamera(camId).getProjectionMatrix());
+	shader->use();
+	shader->setMat4("projection", cam.GetProjectionMatrix());
 }
 
 void AncientArcher::SetSlowUpdateTimeoutLength(const float& newtime)
 {
-	// !! warning, no checking, set at your own risk
 	mSlowUpdateWaitLength = newtime;
 }
 
@@ -456,9 +411,6 @@ void AncientArcher::deltaUpdate()
 	// Snap cursor to the middle of the screen if it is in perspective and cursor is disabled (FPP mode)
 	if (GetMouseReportingMode() == MouseReporting::PERSPECTIVE && GetCursorMode() == GLFW_CURSOR_DISABLED)
 	{
-		//deb(mMousePosition.xOffset);
-		//deb(mMousePosition.yOffset);
-
 		mMousePosition.xOffset = 0;
 		mMousePosition.yOffset = 0;
 	}
@@ -478,6 +430,10 @@ void AncientArcher::deltaUpdate()
 	// check to see if its time to process delayed updates
 	if (mSlowUpdateTimeout > mSlowUpdateWaitLength)
 	{
+#ifdef _DEBUG
+		glm::vec3 loc = mCameras.front()->GetLocation();
+		std::cout << "cam1 pos: " << loc.x << ", " << loc.y << ", " << loc.z << '\n';
+#endif
 		// process all delayed updates
 		for (auto& oSU : onSlowUpdate)
 		{
@@ -486,6 +442,12 @@ void AncientArcher::deltaUpdate()
 		// we should also process whether the window size changed here
 		if (mWindowSizeChanged)
 		{
+
+			for (auto& oWC : onWindowChanged)
+			{
+				oWC.second(*mCameras.front()); // first cam hack
+			}
+
 			// notify shader/cams
 			SetProjectionMatToAllShadersFromFirstCam_hack();
 
@@ -523,41 +485,55 @@ void AncientArcher::render()
 	for (auto& obj : mGameObjects)
 	{
 		// get the id of the shader for this object
-		const int shaderID = obj.getShaderId();
+		//const int shaderID = obj.getShaderId();
 
 		// switch to the shader
-		GetShader(shaderID).use();
+		//GetShader(shaderID).use();
 
 		// get the camera id for this object
-		const int cameraID = obj.getCameraId();
+		//const int cameraID = obj.getCameraId();
 
 		// set the view matrix from the cam for this object
-		GetShader(shaderID).setMat4("view", GetCamera(cameraID).getViewMatrix());
+		//GetShader(shaderID).setMat4("view", GetCamera(cameraID).getViewMatrix());
 
 		// draw using the shader for it
-		obj.draw(GetShader(shaderID));
+		//obj.draw(GetShader(shaderID));
+		obj.draw();
 	}
 
-	// draw skybox if one was specified
-	if (mSkybox) { mSkybox->render(mCameras.front()); }
+	// render Skybox to first Camera if both exist
+	if (mSkybox && mCameras.size() > 0)
+	{
+		mSkybox->render(*mCameras.front());
+	}
 
 	swapWindowBuffers();
 }
 
-void AncientArcher::initEngine()
+void AncientArcher::InitEngine()
 {
 	ResetEngine();
 
-	initFromEngine();
+	InitWindow();
 
+	InitDefaultHandlers();
+
+	InitRenderContext();
+}
+
+void AncientArcher::InitDefaultHandlers()
+{
 	SetReshapeWindowHandler();
 
 	SetCurorPosToStandardCalc();
 
 	SetScrollWheelHandler();
+}
 
+void AncientArcher::InitRenderContext()
+{
 	// Init OpenGL
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))  // init glad (for opengl context) -- must be after initGet()
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))  // init glad (for opengl context) -- must be after init window
 	{
 		//std::cout << "failed to init glad @ file " __FILE__ << " line " << __LINE__ << '\n';
 		exit(-1);
@@ -582,8 +558,7 @@ void AncientArcher::ResetEngine() noexcept
 	// reset all state data
 	mNonSpammableKeysTimeout = 0.f;
 	mSlowUpdateTimeout = 0.f;
-	mNoSpamWaitLength = .5667f;
-	//mSlowUpdateWaitLength = .5667f;
+	mNoSpamWaitLength = .3337f;
 	mSlowUpdateWaitLength = .3337f;
 
 	mLastFrameTime = 0.f;
@@ -594,16 +569,9 @@ void AncientArcher::ResetEngine() noexcept
 void AncientArcher::SetProjectionMatToAllShadersFromFirstCam_hack()
 {
 	// set proj matries hack from first cam
-	for (auto& shad : mShaders)
+	for (const auto& shad : mShaders)
 	{
-		//shad.setMat4("projection", mCameras.front().getProjectionMatrix());
-		const int sID = shad.getID();
-		//std::cout << "shad id: " << sID << '\n';
-
-		const int cID = mCameras.front().getID();
-		//std::cout << "shad id: " << sID << '\n';
-
-		SetProjectionMatrix(sID, cID);  //set shader (sID) from cam (cID)
+		SetProjectionMatrix(shad.get(), *mCameras.front());
 	}
 
 	// if there is a skybox
@@ -611,8 +579,8 @@ void AncientArcher::SetProjectionMatToAllShadersFromFirstCam_hack()
 	{
 		// if there is a camera
 		if (mCameras.size() > 0) {
-			// set the projection matrix on the skybox from the first cam proj matrix
-			mSkybox->setProjectionMatrix(mCameras.front());
+			// set the projection matrix on the skybox from the first camera matrix
+			mSkybox->setProjectionMatrix(*mCameras.front());
 		}
 	}
 }
@@ -712,7 +680,9 @@ void AncientArcher::standardMouseMovement(float xpos, float ypos)
 	}
 	break;
 	default:
+#ifdef _DEBUG
 		std::cout << "case not handled in standard mouse zeros\n";
+#endif
 	}
 }
 
@@ -1451,4 +1421,4 @@ void AncientArcher::pullButtonStateEvents()
 	}
 }
 
-}  // end namespace AA
+	}  // end namespace AA

@@ -59,14 +59,20 @@ glm::mat4 GameObject::getModelMatrix(const int& which)
 		throw("couldn't get model matrix");
 }
 
-const int GameObject::getShaderId() const noexcept
+const int GameObject::getShaderId(const int& which) const
 {
-	return mShaderID;
+	if (which < getInstanceCount())
+		return mInstanceDetails.at(which).mShader->GetID();
+	else
+		throw("couldn't get shader id");
 }
 
-const int GameObject::getCameraId() const noexcept
+const int GameObject::getCameraId(const int& which) const
 {
-	return mCameraID;
+	if (which < getInstanceCount())
+		return mInstanceDetails.at(which).mCamera->GetID();
+	else
+		throw("couldn't get camera id");
 }
 
 const int GameObject::getObjectId() const noexcept
@@ -96,32 +102,35 @@ const ColliderSphere* GameObject::getColliderSphere(uint32_t which) const
 	return mInstanceDetails.at(which).mColliderSphere;  //todo: check there are enough instances if this has problems
 }
 
-GameObject::GameObject(const char* path, int camId, int shadId)
+GameObject::GameObject(const char* path, std::shared_ptr<OGLShader>& shad, std::shared_ptr<Camera>& cam)
 {
 	AA::SceneLoader::getSceneLoader()->loadGameObjectWithAssimp(mMeshes, path);
-	mInstanceDetails.push_back(InstanceDetails());
-	mCameraID = camId;
-	mShaderID = shadId;
+	mInstanceDetails.emplace_back(InstanceDetails(shad, cam));
 	mObjectID = uniqueIDs++;
 }
 
-GameObject::GameObject(const char* path, int camId, int shadId, std::vector<InstanceDetails> details)
+GameObject::GameObject(const char* path, std::vector<InstanceDetails> details)
 {
 	AA::SceneLoader::getSceneLoader()->loadGameObjectWithAssimp(mMeshes, path);
 	mInstanceDetails = details;
-	mCameraID = camId;
-	mShaderID = shadId;
 	mObjectID = uniqueIDs++;
 }
 
-void GameObject::setCamera(int id) noexcept
+void GameObject::SetCamera(int which_instance, std::shared_ptr<Camera>& cam)
 {
-	mCameraID = id;
+	if (which_instance > mInstanceDetails.size())
+	{ 
+		throw("there are not enough object instance to do whatever you're doing");
+	}
+	mInstanceDetails.at(which_instance).mCamera = cam;
+	//mCameraID = id;
 }
 
-void GameObject::setShader(int id) noexcept
+void GameObject::SetShader(int which_instance, std::shared_ptr<OGLShader>& shader)
 {
-	mShaderID = id;
+	if (which_instance > mInstanceDetails.size()) 
+		throw("there are not enough object instances");
+	mInstanceDetails.at(which_instance).mShader = shader;
 }
 
 void GameObject::setColliderSphere(const glm::vec3& center, const float& radius, uint32_t which, bool overwrite) noexcept
@@ -138,15 +147,17 @@ void GameObject::addInstance(const InstanceDetails& instance_details)
 	mInstanceDetails.push_back(instance_details);
 }
 
-void GameObject::draw(const OGLShader& modelShader)
+//void GameObject::draw(const OGLShader& modelShader)
+void GameObject::draw()
 {
 #ifdef _DEBUG
-	if (mShaderID == -1 || mCameraID == -1 || mObjectID == -1)
+	if (/*mShaderID == -1 || mCameraID == -1 || */mObjectID == -1)
 		std::cout << "bad object\n";
 #endif
 
 	if (mInstanceDetails.size() > 0)
-		OGLGraphics::getInstance()->Render(mMeshes, mInstanceDetails, modelShader);
+		OGLGraphics::getInstance()->Render(mMeshes, mInstanceDetails);
+		//OGLGraphics::getInstance()->Render(mMeshes, mInstanceDetails, modelShader);
 }
 
 // --------------------------SCALE
@@ -321,21 +332,18 @@ void InstanceDetails::updateModelMatrix()
 	ModelMatrix = glm::rotate(ModelMatrix, Rotation.z, rot_ax_z);
 }
 
-InstanceDetails::InstanceDetails()
+InstanceDetails::InstanceDetails(std::shared_ptr<OGLShader>& shader, std::shared_ptr<Camera>& cam)
 {
-	Scale = glm::vec3(1);
-	Translate = glm::vec3(0);
-	Rotation = glm::vec3(0);
-	ModelMatrix = glm::mat4(1);
-	ColliderSphere* mColliderSphere = nullptr;
-	updateModelMatrix();
+	mShader = shader;
+	mCamera = cam;
 }
 
-InstanceDetails::InstanceDetails(glm::vec3 scale, glm::vec3 rot, glm::vec3 transl)
+InstanceDetails::InstanceDetails(std::shared_ptr<OGLShader>& shader, std::shared_ptr<Camera>& cam, glm::vec3 scale, glm::vec3 rot, glm::vec3 transl)
 {
+	mShader = shader;
+	mCamera = cam;
 	Scale = scale;
 	Translate = transl;
 	Rotation = rot;
-	updateModelMatrix();
 }
 }  // end namespace AA

@@ -67,7 +67,7 @@ public:
 
 	// PUBLIC HANDLERS FOR GLFW
 	void reshapeWindowHandler(GLFWwindow* window, int width, int height);
-	void resizeWindowHandler(GLFWwindow* window, int width, int height);
+	//void resizeWindowHandler(GLFWwindow* window, int width, int height);
 	void perspectiveMouseHandler(GLFWwindow* window, float xpos, float ypos);
 	void standardMouseHandler(GLFWwindow* window, float xpos, float ypos);
 	void scrollHandler(GLFWwindow* window, float xpos, float ypos);
@@ -89,14 +89,7 @@ protected:
 	void clearBackBuffer() const noexcept;
 	void swapWindowBuffers() const noexcept;
 
-	//void SetReshapeWindowHandler() noexcept;
-	//void SetResizeWindowHandler() noexcept;
-	//void SetCurorPosToPerspectiveCalc() noexcept;
-	//void SetCurorPosToStandardCalc() noexcept;
-	//void SetScrollWheelHandler() noexcept;
-
-	void initGLFW() noexcept;
-	void initFromEngine();
+	void InitWindow();
 	void ResetStateDataToDefault();
 
 //private:
@@ -109,6 +102,10 @@ protected:
 	GLFWwindow* mWindow = nullptr;
 
 	// hold for engine to change back to false  so it can know if it should resize its viewport
-	bool mWindowSizeChanged = true;
+	bool mWindowSizeChanged = false;
+
+private:
+		void initGLFW() noexcept;
+
 };
 }  // end namespace AA

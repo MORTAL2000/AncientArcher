@@ -55,18 +55,22 @@ public:
 	int Run();
 
 public:
-	const Camera& GetCamera(int camId) const;
-	Camera& GetCamera(int camId);
-	const OGLShader& GetShader(int shadId) const;
-	OGLShader& GetShader(int shadId);
+	const Camera* GetCamera(int camId) const;
+	Camera* GetCamera(int camId);
+
+	const OGLShader* GetShader(int shadId) const;
+	OGLShader* GetShader(int shadId);
+
 	const GameObject& GetGameObject(int objId) const;
 	GameObject& GetGameObject(int objId);
 
 	int AddCamera(int w, int h);
+
 	int AddShader(const char* vert_path, const char* frag_path, const bool isPath = true);
 	int AddShader(const SHADERTYPE& type);
+	
 	int AddObject(const char* path, int cam_id, int shad_id);
-	int AddObject(const char* path, int cam_id, int shad_id, const std::vector<InstanceDetails>& details);
+	int AddObject(const char* path, const std::vector<InstanceDetails>& details);
 
 	void SetSkybox(const std::shared_ptr<Skybox>& skybox) noexcept;
 
@@ -79,6 +83,7 @@ public:
 	uint32_t AddToKeyHandling(void(*function)(KeyboardInput&));
 	uint32_t AddToMouseHandling(void(*function)(MouseInput&));
 	uint32_t AddToOnTeardown(void(*function)());
+	uint32_t AddToOnWindowChanged(void(*function)(Camera&));
 
 	bool RemoveFromOnBegin(uint32_t r_id);
 	bool RemoveFromDeltaUpdate(uint32_t r_id);
@@ -89,23 +94,18 @@ public:
 	bool RemoveFromKeyHandling(uint32_t r_id);
 	bool RemoveFromMouseHandling(uint32_t r_id);
 	bool RemoveFromTeardown(uint32_t r_id);
+	bool RemoveFromOnWindowChanged(uint32_t r_id);
 
 	void SetSlowUpdateTimeoutLength(const float& newtime);
-	void SetMaxRenderDistance(int camId, float amt) noexcept;
-	//void SetWindowSize(const char to, int width = -1, int height = -1, bool center = false);
 	void SetWindowPos(int xpos, int ypos);
-	void SetProjectionMatrix(int shadId, int camId);
 	void SetCursorToEnabled(bool isHardwareRendered = false);
-	
-	//void SetCursorToDisabled();
-	//void SetToPerspectiveMouseHandling();
-	//void SetToStandardMouseHandling();
-	//void SetWindowTitle(const char* title);
+	void SetToFPPMouseHandling() noexcept;
 
 	void reshapeWindowHandler(GLFWwindow* window, int width, int height);
 	void perspectiveMouseHandler(GLFWwindow* window, float xpos, float ypos);
 	void standardMouseHandler(GLFWwindow* window, float xpos, float ypos);
 	void scrollHandler(GLFWwindow* window, float xpos, float ypos);
+	void standardMouseMovement(float xpos, float ypos);
 
 	void pullButtonStateEvents();
 
@@ -120,9 +120,10 @@ private:
 	float mSlowUpdateTimeout;                                                 ///< keeps track of how how long the slow update has been timed out
 	float mSlowUpdateWaitLength;                                              ///< ms length the slow update times out for at least
 
-	std::vector<Camera>     mCameras;                                         ///< list of available cameras
-	std::vector<OGLShader>  mShaders;                                         ///< list of available shaders
+	std::vector<std::shared_ptr<Camera>>     mCameras;                                         ///< list of available cameras
+	std::vector<std::shared_ptr<OGLShader>>  mShaders;                                         ///< list of available shaders
 	std::vector<GameObject> mGameObjects;                                     ///< list of available objects
+
 	std::shared_ptr<Skybox> mSkybox;                                          ///< the main skybox
 
 	std::unordered_map<uint32_t, std::function<void()> > onBegin;              ///< list of functions to run once when runMainAncientArcher is called
@@ -134,6 +135,7 @@ private:
 	std::unordered_map<uint32_t, std::function<void(KeyboardInput&)> > onKeyHandling;        ///< list of functions to handle keypresses every frame in the main AncientArcher
 	std::unordered_map<uint32_t, std::function<void(MouseInput&)> > onMouseHandling;         ///< list of functions to handle mouse movement every frame in the main AncientArcher
 	std::unordered_map<uint32_t, std::function<void()> > onTearDown;                         ///< list of functions to run when destroying
+	std::unordered_map<uint32_t, std::function<void(Camera&)> > onWindowChanged;             ///< list of functions to run when destroying
 
 	// called during Run
 	void begin();
@@ -141,18 +143,19 @@ private:
 	void render();
 	void teardown();
 
-	// helpers
-	void initEngine();
 	void ResetEngine() noexcept;
+	void InitEngine();
+	void InitDefaultHandlers();
+	void InitRenderContext();
 
 	void SetReshapeWindowHandler() noexcept;
 	void SetCurorPosToPerspectiveCalc() noexcept;
 	void SetCurorPosToStandardCalc() noexcept;
 	void SetScrollWheelHandler() noexcept;
 
-	void standardMouseMovement(float xpos, float ypos);
-
 	// todo: refactor - used for testing purposes until more elegant solution appears
+	// helpers
+	void SetProjectionMatrix(const OGLShader* shader, const Camera& cam);
 	void SetProjectionMatToAllShadersFromFirstCam_hack();
 };
 }  // end namespace AA
