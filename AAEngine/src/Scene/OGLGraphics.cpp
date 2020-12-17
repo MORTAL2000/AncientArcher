@@ -68,6 +68,7 @@ void OGLGraphics::Render(const std::vector<MeshDrawInfo>& meshes, const std::vec
 		static std::shared_ptr<OGLShader> last_shader;
 		if (last_shader != d.mShader)  // first instance should always set this to start
 		{
+			last_shader.reset();
 			last_shader = d.mShader;
 			last_shader->use();
 			last_shader->setMat4("model", d.ModelMatrix);
@@ -83,16 +84,33 @@ void OGLGraphics::Render(const std::vector<MeshDrawInfo>& meshes, const std::vec
 				}
 				glBindVertexArray(m.vao);
 				glDrawElements(GL_TRIANGLES, m.numElements, GL_UNSIGNED_INT, nullptr);
+				i++;
 			}
+#ifdef _DEBUG
+			std::cout << "draw from diff shader\n";
+#endif
 		}
 		else // same shader
 		{
+			last_shader->use();
 			last_shader->setMat4("model", d.ModelMatrix);
 			for (const auto& m : meshes)
 			{
+				uint32_t i = 0;
+				for (const auto& texs : m.textureDrawIds)
+				{
+					glActiveTexture(GL_TEXTURE0 + i);
+					const std::string tex_type = texs.second;
+					glUniform1i(glGetUniformLocation(last_shader->GetID(), ("material." + tex_type).c_str()), i);
+					glBindTexture(GL_TEXTURE_2D, texs.first);
+				}
 				glBindVertexArray(m.vao);
 				glDrawElements(GL_TRIANGLES, m.numElements, GL_UNSIGNED_INT, nullptr);
+				i++;
 			}
+#ifdef _DEBUG
+			std::cout << "draw from last shader\n";
+#endif
 		}
 	}
 

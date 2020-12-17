@@ -75,13 +75,13 @@ AncientArcher::AncientArcher()
 	InitEngine();
 }
 
-const Camera* AncientArcher::GetCamera(int camId) const
+const std::shared_ptr<Camera> AncientArcher::GetCamera(int camId) const
 {
 	for (const auto& cam : mCameras)
 	{
 		if (cam->GetID() == camId)
 		{
-			return cam.get();
+			return cam;
 		}
 	}
 
@@ -91,13 +91,13 @@ const Camera* AncientArcher::GetCamera(int camId) const
 	exit(-1);
 }
 
-Camera* AncientArcher::GetCamera(int camId)
+std::shared_ptr<Camera> AncientArcher::GetCamera(int camId)
 {
 	for (auto& cam : mCameras)
 	{
 		if (cam->GetID() == camId)
 		{
-			return cam.get();
+			return cam;
 		}
 	}
 
@@ -106,13 +106,13 @@ Camera* AncientArcher::GetCamera(int camId)
 	exit(-1);
 }
 
-const OGLShader* AncientArcher::GetShader(int shadId) const
+const std::shared_ptr<OGLShader> AncientArcher::GetShader(int shadId) const
 {
 	for (const auto& shad : mShaders)
 	{
 		if (shad->GetID() == shadId)
 		{
-			return shad.get();
+			return shad;
 		}
 	}
 
@@ -121,13 +121,13 @@ const OGLShader* AncientArcher::GetShader(int shadId) const
 	exit(-1);
 }
 
-OGLShader* AncientArcher::GetShader(int shadId)
+std::shared_ptr<OGLShader> AncientArcher::GetShader(int shadId)
 {
 	for (auto& shad : mShaders)
 	{
 		if (shad->GetID() == shadId)
 		{
-			return shad.get();
+			return shad;
 		}
 	}
 
@@ -187,7 +187,7 @@ int AncientArcher::AddShader(const SHADERTYPE& type)
 
 int AncientArcher::AddObject(const char* path, int camId, int shadId)
 {
-	mGameObjects.emplace_back(GameObject(path, mShaders.at(shadId), mCameras.at(camId)));
+	mGameObjects.emplace_back(GameObject(path, GetShader(shadId), GetCamera(camId)));
 	return mGameObjects.back().getObjectId();
 }
 
@@ -680,10 +680,12 @@ void AncientArcher::standardMouseMovement(float xpos, float ypos)
 	}
 	break;
 	default:
+	{
 #ifdef _DEBUG
 		std::cout << "case not handled in standard mouse zeros\n";
 #endif
 	}
+	}   /////////////////////// WHY WOULD THIS BRACKET CAUSE AN ERROR  /// VS: BUT DERP: \src\AncientArcher.cpp(686,2): error C2059: syntax error: '}'
 }
 
 //---------------------------------------------------------------------------------------

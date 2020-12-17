@@ -102,7 +102,7 @@ const ColliderSphere* GameObject::getColliderSphere(uint32_t which) const
 	return mInstanceDetails.at(which).mColliderSphere;  //todo: check there are enough instances if this has problems
 }
 
-GameObject::GameObject(const char* path, std::shared_ptr<OGLShader>& shad, std::shared_ptr<Camera>& cam)
+GameObject::GameObject(const char* path, std::shared_ptr<OGLShader> shad, std::shared_ptr<Camera> cam)
 {
 	AA::SceneLoader::getSceneLoader()->loadGameObjectWithAssimp(mMeshes, path);
 	mInstanceDetails.emplace_back(InstanceDetails(shad, cam));
@@ -332,13 +332,13 @@ void InstanceDetails::updateModelMatrix()
 	ModelMatrix = glm::rotate(ModelMatrix, Rotation.z, rot_ax_z);
 }
 
-InstanceDetails::InstanceDetails(std::shared_ptr<OGLShader>& shader, std::shared_ptr<Camera>& cam)
+InstanceDetails::InstanceDetails(std::shared_ptr<OGLShader> shader, std::shared_ptr<Camera> cam)
 {
 	mShader = shader;
 	mCamera = cam;
 }
 
-InstanceDetails::InstanceDetails(std::shared_ptr<OGLShader>& shader, std::shared_ptr<Camera>& cam, glm::vec3 scale, glm::vec3 rot, glm::vec3 transl)
+InstanceDetails::InstanceDetails(std::shared_ptr<OGLShader> shader, std::shared_ptr<Camera> cam, glm::vec3 scale, glm::vec3 rot, glm::vec3 transl)
 {
 	mShader = shader;
 	mCamera = cam;

@@ -40,9 +40,9 @@ struct InstanceDetails
 {
 	void updateModelMatrix();
 
-	InstanceDetails(std::shared_ptr<OGLShader>& shader, std::shared_ptr<Camera>& cam);
+	InstanceDetails(std::shared_ptr<OGLShader> shader, std::shared_ptr<Camera> cam);
 
-	InstanceDetails(std::shared_ptr<OGLShader>& shader, std::shared_ptr<Camera>& cam, glm::vec3 scale, glm::vec3 rot, glm::vec3 transl);
+	InstanceDetails(std::shared_ptr<OGLShader> shader, std::shared_ptr<Camera> cam, glm::vec3 scale, glm::vec3 rot, glm::vec3 transl);
 
 	//InstanceDetails(int shader, int cameraid);
 	//InstanceDetails(int shader, int cameraid, glm::vec3 scale, glm::vec3 rot, glm::vec3 transl);

@@ -47,7 +47,7 @@ class GameObject
 {
 public:
 	// public constructors
-	GameObject(const char* path, std::shared_ptr<OGLShader>& shad, std::shared_ptr<Camera>& cam);
+	GameObject(const char* path, std::shared_ptr<OGLShader> shad, std::shared_ptr<Camera> cam);
 	GameObject(const char* path, std::vector<InstanceDetails> details);
 
 	// getters

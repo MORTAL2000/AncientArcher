@@ -55,11 +55,11 @@ public:
 	int Run();
 
 public:
-	const Camera* GetCamera(int camId) const;
-	Camera* GetCamera(int camId);
+	const std::shared_ptr<Camera> GetCamera(int camId) const;
+	std::shared_ptr<Camera> GetCamera(int camId);
 
-	const OGLShader* GetShader(int shadId) const;
-	OGLShader* GetShader(int shadId);
+	const std::shared_ptr<OGLShader> GetShader(int shadId) const;
+	std::shared_ptr<OGLShader> GetShader(int shadId);
 
 	const GameObject& GetGameObject(int objId) const;
 	GameObject& GetGameObject(int objId);
