@@ -149,7 +149,7 @@ unsigned int TexLoader::textureFromData(const aiTexture* tex)
 	//	return out_texID;
 	//}
 	bool compressed = false;
-	if (tex->mViewportHeight == 0)
+	if (tex->mHeight == 0)
 	{
 #ifdef _DEBUG
 		std::cout << "height says compressed data texture\n";
@@ -160,7 +160,7 @@ unsigned int TexLoader::textureFromData(const aiTexture* tex)
 
 	int width, height, nrComponents;
 
-	int texture_size = tex->mViewportWidth * std::max(tex->mViewportHeight, 1u);
+	int texture_size = tex->mWidth * std::max(tex->mHeight, 1u);
 
 	unsigned char* data = stbi_load_from_memory(reinterpret_cast<unsigned char*>(tex->pcData), texture_size, &width, &height, &nrComponents, STBI_rgb);
 
