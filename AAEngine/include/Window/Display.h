@@ -42,8 +42,6 @@ class Display
 {
 public:
 
-	//static Display* Get();
-
 	~Display();
 
 	int GetWindowWidth() noexcept;
@@ -66,13 +64,11 @@ public:
 	void closeWindow() noexcept;
 
 	// PUBLIC HANDLERS FOR GLFW
-	void reshapeWindowHandler(GLFWwindow* window, int width, int height);
+	//void reshapeWindowHandler(GLFWwindow* window, int width, int height);
 	//void resizeWindowHandler(GLFWwindow* window, int width, int height);
-	void perspectiveMouseHandler(GLFWwindow* window, float xpos, float ypos);
-	void standardMouseHandler(GLFWwindow* window, float xpos, float ypos);
-	void scrollHandler(GLFWwindow* window, float xpos, float ypos);
-
-	//friend class AncientArcher;
+	//void perspectiveMouseHandler(GLFWwindow* window, float xpos, float ypos);
+	//void standardMouseHandler(GLFWwindow* window, float xpos, float ypos);
+	//void scrollHandler(GLFWwindow* window, float xpos, float ypos);
 
 protected:
 
@@ -92,7 +88,7 @@ protected:
 	void InitWindow();
 	void ResetStateDataToDefault();
 
-//private:
+
 	// state data
 	MouseReporting mMouseReporting = MouseReporting::STANDARD;
 	bool mWindowIsFullScreen = false;
@@ -103,9 +99,6 @@ protected:
 
 	// hold for engine to change back to false  so it can know if it should resize its viewport
 	bool mWindowSizeChanged = false;
-
-private:
-		void initGLFW() noexcept;
 
 };
 }  // end namespace AA
