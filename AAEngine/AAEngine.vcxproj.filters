@@ -152,9 +152,6 @@
     <ClCompile Include="src\Window\Display.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Window\DisplayCallbacks.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\AncientArcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

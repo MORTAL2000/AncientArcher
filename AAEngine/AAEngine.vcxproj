@@ -132,7 +132,6 @@
     <ClCompile Include="src\Scene\Vertex.cpp" />
     <ClCompile Include="src\Controls\Controls.cpp" />
     <ClCompile Include="src\Window\Display.cpp" />
-    <ClCompile Include="src\Window\DisplayCallbacks.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
