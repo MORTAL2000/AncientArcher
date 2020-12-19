@@ -156,7 +156,7 @@ void GameObject::draw()
 #endif
 
 	if (mInstanceDetails.size() > 0)
-		OGLGraphics::getInstance()->Render(mMeshes, mInstanceDetails);
+		OGLGraphics::Get()->Render(mMeshes, mInstanceDetails);
 		//OGLGraphics::getInstance()->Render(mMeshes, mInstanceDetails, modelShader);
 }
 

@@ -38,18 +38,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <memory>
 #include <string>
 #include <cstddef>
-#include "../../include/Scene/GameObject.h"
+#ifdef _DEBUG
 #include <iostream>
-//#include "Vertex.h"
-
+#endif
 namespace AA
 {
-OGLGraphics* OGLGraphics::getInstance()
+OGLGraphics* OGLGraphics::Get()
 {
 	static OGLGraphics* OGLgraphics = new OGLGraphics();
 	return OGLgraphics;
 }
-OGLGraphics::OGLGraphics() {};
+OGLGraphics::OGLGraphics() 
+{
+
+};
 
 /** Render the meshes with the shader. Assumes Camera View Matrix is already set.
  *  @param[in] meshes to draw.
@@ -109,7 +111,7 @@ void OGLGraphics::Render(const std::vector<MeshDrawInfo>& meshes, const std::vec
 				i++;
 			}
 #ifdef _DEBUG
-			std::cout << "draw from last shader\n";
+			//std::cout << "draw from last shader\n";
 #endif
 		}
 	}

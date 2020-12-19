@@ -31,29 +31,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ----------------------------------------------------------------------
 */
 #pragma once
-#include <glm/glm.hpp>
 #include <vector>
-#include <glad/glad.h>
 #include <string>
-#include "GameObject.h"
-#include "OGLShader.h"
 #include "MeshDrawInfo.h"
 #include "InstanceDetails.h"
+
 namespace AA
 {
 class OGLGraphics
 {
 public:
 
-	static OGLGraphics* getInstance();
-
-	friend class GameObject;
+	static OGLGraphics* Get();
+	void Render(const std::vector<MeshDrawInfo>& meshes, const std::vector<InstanceDetails>& details);
 
 private:
 
-	//void Render(const std::vector<MeshDrawInfo>& meshes, const std::vector<InstanceDetails>& details, const OGLShader& modelShader);
-
 	OGLGraphics();
-	void Render(const std::vector<MeshDrawInfo>& meshes, const std::vector<InstanceDetails>& details);
 };
 }  // end namespace AA

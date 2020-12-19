@@ -34,6 +34,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <glm\ext\vector_float3.hpp>
 #include "ColliderSphere.h"
 #include "OGLShader.h"
+#include <memory>
+#include "Camera.h"
 namespace AA
 {
 struct InstanceDetails
