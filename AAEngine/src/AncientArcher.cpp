@@ -538,6 +538,11 @@ void AncientArcher::InitRenderContext()
 		//std::cout << "failed to init glad @ file " __FILE__ << " line " << __LINE__ << '\n';
 		exit(-1);
 	}
+#ifdef _DEBUG
+	printf("Window with OpenGL Version %s\n", glGetString(GL_VERSION));
+	printf("Video Card Manufacturer: %s\n", glGetString(GL_VENDOR));
+	printf("Rendering with: %s\n", glGetString(GL_RENDERER));
+#endif
 }
 
 void AncientArcher::ResetEngine() noexcept
