@@ -38,12 +38,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace AA
 {
-//Display* Display::Get()
-//{
-//	static Display* display = new Display();
-//	return display;
-//}
-
 Display::~Display()  // breaks rule of 5
 {
 	glfwTerminate();
@@ -60,7 +54,16 @@ void Display::SetWindowClearColor(glm::vec3 rgb) noexcept
 
 int Display::GetWindowWidth() noexcept
 {
-	return mWindowWidth;
+	if (!mWindow)
+	{
+
+	}
+
+	int width, height;
+
+	glfwGetWindowSize(mWindow, &width, &height);
+
+	return width;
 }
 
 int Display::GetWindowHeight() noexcept
@@ -145,23 +148,28 @@ void Display::SetWindowSize(int width, int height, bool center) noexcept
 	mWindowIsFullScreen = false;
 }
 
+/// <summary>
+/// Sets the window from a list of presets m = max, f = fullscreen, b = borderless
+/// </summary>
+/// <param name="to">'m' = maximize, 'f' = fullscreen, 'b' = fullscreen borderless. All other specifications are ignored with undefined behavior.</param>
+/// <returns></returns>
 void Display::SetWindowSize(const char to) noexcept
 {
 	switch (to)
 	{
 		// m = maximize
 	case 'm':
-		SetWindowToMaximized();
+		setWindowToMaximized();
 		break;
 
 		// f = fullscreen
 	case 'f':
-		SetWindowToFullscreen();
+		setWindowToFullscreen();
 		break;
 
 		// b = borderless fullscreen
 	case 'b':
-		SetWindowToFullscreenBorderless();
+		setWindowToFullscreenBorderless();
 		break;
 
 		// undefined = do nothing
@@ -178,11 +186,11 @@ void Display::toggleFullScreen() noexcept
 	}
 	else
 	{
-		SetWindowToFullscreen();
+		setWindowToFullscreen();
 	}
 }
 
-void Display::SetWindowToFullscreen() noexcept
+void Display::setWindowToFullscreen() noexcept
 {
 	int x, y, w, h;
 	glfwGetMonitorWorkarea(glfwGetPrimaryMonitor(), &x, &y, &w, &h);
@@ -224,21 +232,20 @@ void Display::SetFullscreenToOff() noexcept
 	mWindowIsFullScreen = false;
 }
 
-void Display::SetWindowToMaximized() noexcept
+void Display::setWindowToMaximized() noexcept
 {
 	// turn off fullscreen so the maximize works (glfw specification)
 	if (mWindowIsFullScreen) {
-		glfwSetWindowMonitor(mWindow, nullptr, mXPos, mYPos, mWindowWidth, mWindowHeight, 0);
-		mWindowIsFullScreen = false;
+		SetFullscreenToOff();
 	}
 	glfwMaximizeWindow(mWindow);
 }
 
-void Display::SetWindowToFullscreenBorderless() noexcept
+void Display::setWindowToFullscreenBorderless() noexcept
 {
 	if (mWindowIsFullScreen)
 	{
-		toggleFullScreen();
+		SetFullscreenToOff();
 	}
 
 	auto monitor = glfwGetPrimaryMonitor();
@@ -249,7 +256,7 @@ void Display::SetWindowToFullscreenBorderless() noexcept
 	mWindowWidth = mode->width;
 
 	glfwSetWindowMonitor(mWindow, nullptr, mXPos, mYPos, mWindowWidth, mWindowHeight, mode->refreshRate);
-	mWindowIsFullScreen = true;
+
 }
 
 void Display::clearBackBuffer() const noexcept
@@ -268,7 +275,7 @@ void Display::keepWindowOpen() noexcept
 	glfwSetWindowShouldClose(mWindow, 0);
 }
 
-void Display::closeWindow() noexcept
+void Display::CloseWindow() noexcept
 {
 	glfwSetWindowShouldClose(mWindow, 1);
 }
@@ -287,7 +294,7 @@ void Display::initGLFW() noexcept
 #endif
 }
 
-void Display::initFromEngine()
+void Display::initDisplayFromEngine()
 {
 	initGLFW();
 
@@ -300,12 +307,12 @@ void Display::initFromEngine()
 
 	glfwMakeContextCurrent(mWindow);
 
-	//SetReshapeWindowHandler();
+	//setReshapeWindowHandler();
 
-	////SetCurorPosToPerspectiveCalc();
-	//SetCurorPosToStandardCalc();
+	////setCurorPosToPerspectiveCalc();
+	//setCurorPosToStandardCalc();
 
-	//SetScrollWheelHandler();
+	//setScrollWheelHandler();
 
 	//SetResizeWindowHandler();
 
@@ -319,7 +326,7 @@ void Display::initFromEngine()
 	//}
 }
 
-void Display::ResetStateDataToDefault()
+void Display::resetStateDataToDefault()
 {
 	mWindowIsFullScreen = false;
 	mWindowWidth = 800, mWindowHeight = 600;

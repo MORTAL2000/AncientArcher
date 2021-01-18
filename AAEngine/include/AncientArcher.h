@@ -96,46 +96,46 @@ public:
 	void SetWindowPos(int xpos, int ypos);
 	void SetProjectionMatrix(int shadId, int camId);
 	void SetCursorToEnabled(bool isHardwareRendered = false);
-	
+
 	//void SetCursorToDisabled();
 	//void SetToPerspectiveMouseHandling();
 	//void SetToStandardMouseHandling();
 	//void SetWindowTitle(const char* title);
 
-	void reshapeWindowHandler(GLFWwindow* window, int width, int height);
-	void perspectiveMouseHandler(GLFWwindow* window, float xpos, float ypos);
-	void standardMouseHandler(GLFWwindow* window, float xpos, float ypos);
-	void scrollHandler(GLFWwindow* window, float xpos, float ypos);
-
-	void pullButtonStateEvents();
+	void ReshapeWindowHandler(GLFWwindow* window, int width, int height);
+	void PerspectiveMouseHandler(GLFWwindow* window, float xpos, float ypos);
+	void StandardMouseHandler(GLFWwindow* window, float xpos, float ypos);
+	void ScrollHandler(GLFWwindow* window, float xpos, float ypos);
 
 private:
 	AncientArcher();
 
-	float mLastFrameTime;                                                     ///< keeps track of the previous frame's time
-	float mCurrentFrameTime;                                                  ///< keeps track of the current frame's time
-	float mDeltaTime;                                                         ///< the delta difference between previous and current frame
-	float mNonSpammableKeysTimeout;                                           ///< keeps track of how long the keys have timed out
-	float mNoSpamWaitLength;                                                  ///< how long the non-spammable keys are to time out for at least
-	float mSlowUpdateTimeout;                                                 ///< keeps track of how how long the slow update has been timed out
-	float mSlowUpdateWaitLength;                                              ///< ms length the slow update times out for at least
+	float mLastFrameTime;                  ///< keeps track of the previous frame's time
+	float mCurrentFrameTime;               ///< keeps track of the current frame's time
+	float mDeltaTime;                      ///< the delta difference between previous and current frame
+	float mNonSpammableKeysTimeout;        ///< keeps track of how long the keys have timed out
+	float mNoSpamWaitLength;               ///< how long the non-spammable keys are to time out for at least
+	float mSlowUpdateTimeout;              ///< keeps track of how how long the slow update has been timed out
+	float mSlowUpdateWaitLength;           ///< ms length the slow update times out for at least
 
-	std::vector<Camera>     mCameras;                                         ///< list of available cameras
-	std::vector<OGLShader>  mShaders;                                         ///< list of available shaders
-	std::vector<GameObject> mGameObjects;                                     ///< list of available objects
-	std::shared_ptr<Skybox> mSkybox;                                          ///< the main skybox
+	std::vector<Camera>     mCameras;      ///< list of available cameras
+	std::vector<OGLShader>  mShaders;      ///< list of available shaders
+	std::vector<GameObject> mGameObjects;  ///< list of available objects
+	std::shared_ptr<Skybox> mSkybox;       ///< the main skybox
 
-	std::unordered_map<uint32_t, std::function<void()> > onBegin;              ///< list of functions to run once when runMainAncientArcher is called
-	std::unordered_map<uint32_t, std::function<void(float)> > onDeltaUpdate;   ///< list of functions that rely on deltatime in the main AncientArcher
-	std::unordered_map<uint32_t, std::function<void()> > onUpdate;             ///< list of functions that run every frame in the main AncientArcher
-	std::unordered_map<uint32_t, std::function<void()> > onSlowUpdate;         ///< list of functions to run every only every mSlowUpdateWaitLength in the main AncientArcher
-	std::unordered_map<uint32_t, std::function<bool(KeyboardInput&)> > onTimeoutKeyHandling; ///< list of functions to handle key presses that time out for mNoSpamWaitLength after press
-	std::unordered_map<uint32_t, std::function<void(ScrollInput&)> > onScrollHandling;       ///< list of functions to handle mouse wheel scroll every frame in the main AncientArcher
-	std::unordered_map<uint32_t, std::function<void(KeyboardInput&)> > onKeyHandling;        ///< list of functions to handle keypresses every frame in the main AncientArcher
-	std::unordered_map<uint32_t, std::function<void(MouseInput&)> > onMouseHandling;         ///< list of functions to handle mouse movement every frame in the main AncientArcher
-	std::unordered_map<uint32_t, std::function<void()> > onTearDown;                         ///< list of functions to run when destroying
+	std::unordered_map<uint32_t, std::function<void()> >                            onBegin;  ///< list of functions to run once when runMainAncientArcher is called
+	std::unordered_map<uint32_t, std::function<void(float)> >                 onDeltaUpdate;  ///< list of functions that rely on deltatime in the main AncientArcher
+	std::unordered_map<uint32_t, std::function<void()> >                           onUpdate;  ///< list of functions that run every frame in the main AncientArcher
+	std::unordered_map<uint32_t, std::function<void()> >                       onSlowUpdate;  ///< list of functions to run every only every mSlowUpdateWaitLength in the main AncientArcher
+	std::unordered_map<uint32_t, std::function<bool(KeyboardInput&)> > onTimeoutKeyHandling;  ///< list of functions to handle key presses that time out for mNoSpamWaitLength after press
+	std::unordered_map<uint32_t, std::function<void(ScrollInput&)> >       onScrollHandling;  ///< list of functions to handle mouse wheel scroll every frame in the main AncientArcher
+	std::unordered_map<uint32_t, std::function<void(KeyboardInput&)> >        onKeyHandling;  ///< list of functions to handle keypresses every frame in the main AncientArcher
+	std::unordered_map<uint32_t, std::function<void(MouseInput&)> >         onMouseHandling;  ///< list of functions to handle mouse movement every frame in the main AncientArcher
+	std::unordered_map<uint32_t, std::function<void()> >                         onTearDown;  ///< list of functions to run when destroying
 
 	// called during Run
+	void pullButtonStateEvents();
+
 	void begin();
 	void deltaUpdate();
 	void render();
@@ -143,16 +143,16 @@ private:
 
 	// helpers
 	void initEngine();
-	void ResetEngine() noexcept;
+	void resetEngine() noexcept;
 
-	void SetReshapeWindowHandler() noexcept;
-	void SetCurorPosToPerspectiveCalc() noexcept;
-	void SetCurorPosToStandardCalc() noexcept;
-	void SetScrollWheelHandler() noexcept;
+	void setReshapeWindowHandler() noexcept;
+	void setCurorPosToPerspectiveCalc() noexcept;
+	void setCurorPosToStandardCalc() noexcept;
+	void setScrollWheelHandler() noexcept;
 
 	void standardMouseMovement(float xpos, float ypos);
 
 	// todo: refactor - used for testing purposes until more elegant solution appears
-	void SetProjectionMatToAllShadersFromFirstCam_hack();
+	void __setProjectionMatToAllShadersFromFirstCam_hack();
 };
 }  // end namespace AA

@@ -41,9 +41,6 @@ enum class MouseReporting { STANDARD, PERSPECTIVE };
 class Display
 {
 public:
-
-	//static Display* Get();
-
 	~Display();
 
 	int GetWindowWidth() noexcept;
@@ -63,52 +60,48 @@ public:
 	void SetWindowSize(const char to) noexcept;
 	void SetWindowTitle(const char* name) noexcept;
 
-	void closeWindow() noexcept;
+	void CloseWindow() noexcept;
 
-	// PUBLIC HANDLERS FOR GLFW
-	void reshapeWindowHandler(GLFWwindow* window, int width, int height);
-	void resizeWindowHandler(GLFWwindow* window, int width, int height);
-	void perspectiveMouseHandler(GLFWwindow* window, float xpos, float ypos);
-	void standardMouseHandler(GLFWwindow* window, float xpos, float ypos);
-	void scrollHandler(GLFWwindow* window, float xpos, float ypos);
-
-	//friend class AncientArcher;
+	//void ReshapeWindowHandler(GLFWwindow* window, int width, int height);
+	//void PerspectiveMouseHandler(GLFWwindow* window, float xpos, float ypos);
+	//void StandardMouseHandler(GLFWwindow* window, float xpos, float ypos);
+	//void ScrollHandler(GLFWwindow* window, float xpos, float ypos);
 
 protected:
 
-	// internal functions
 	void toggleFullScreen() noexcept;
-	void SetWindowToFullscreen() noexcept;
+	void setWindowToFullscreen() noexcept;
 	void SetFullscreenToOff() noexcept;
 
-	void SetWindowToMaximized() noexcept;
-	void SetWindowToFullscreenBorderless() noexcept;
+	void setWindowToMaximized() noexcept;
+	void setWindowToFullscreenBorderless() noexcept;
 
 	void keepWindowOpen() noexcept;
 
 	void clearBackBuffer() const noexcept;
 	void swapWindowBuffers() const noexcept;
 
-	//void SetReshapeWindowHandler() noexcept;
+	//void setReshapeWindowHandler() noexcept;
 	//void SetResizeWindowHandler() noexcept;
-	//void SetCurorPosToPerspectiveCalc() noexcept;
-	//void SetCurorPosToStandardCalc() noexcept;
-	//void SetScrollWheelHandler() noexcept;
+	//void setCurorPosToPerspectiveCalc() noexcept;
+	//void setCurorPosToStandardCalc() noexcept;
+	//void setScrollWheelHandler() noexcept;
 
 	void initGLFW() noexcept;
-	void initFromEngine();
-	void ResetStateDataToDefault();
+	void initDisplayFromEngine();
+	void resetStateDataToDefault();
 
-//private:
-	// state data
 	MouseReporting mMouseReporting = MouseReporting::STANDARD;
 	bool mWindowIsFullScreen = false;
-	int mWindowWidth = 800, mWindowHeight = 600;
+	int mWindowWidth = 1024, mWindowHeight = 768;
 	int mXPos = 0, mYPos = 0;
 	glm::vec3 mWindowClearColor = glm::vec3(0.35f, 0.15f, 0.35f);
 	GLFWwindow* mWindow = nullptr;
 
-	// hold for engine to change back to false  so it can know if it should resize its viewport
-	bool mWindowSizeChanged = true;
+	// hold for engine to change back to false so it can know if it should resize the camera viewports
+	bool mWindowSizeDirty = false;
+
+private:
+
 };
 }  // end namespace AA

@@ -50,7 +50,10 @@ AncientArcher* AncientArcher::Get()
 
 int AncientArcher::Run()
 {
-	begin();	while (!glfwWindowShouldClose(mWindow)) { deltaUpdate();		render(); }	teardown();	return 0;
+	begin();
+	while (!glfwWindowShouldClose(mWindow)) { deltaUpdate(); render(); }
+	teardown();
+	return 0;
 }
 
 void AncientArcher::teardown()
@@ -343,11 +346,11 @@ void AncientArcher::SetCursorToEnabled(bool isHardwareRendered)
 //}
 //void AncientArcher::SetToPerspectiveMouseHandling()
 //{
-//	SetCurorPosToPerspectiveCalc();
+//	setCurorPosToPerspectiveCalc();
 //}
 //void AncientArcher::SetToStandardMouseHandling()
 //{
-//	SetCurorPosToStandardCalc();
+//	setCurorPosToStandardCalc();
 //}
 //void AncientArcher::SetWindowTitle(const char* title)
 //{
@@ -422,7 +425,7 @@ void AncientArcher::begin()
 		oB.second();
 	}
 
-	SetProjectionMatToAllShadersFromFirstCam_hack();
+	__setProjectionMatToAllShadersFromFirstCam_hack();
 }
 
 void AncientArcher::deltaUpdate()
@@ -484,13 +487,13 @@ void AncientArcher::deltaUpdate()
 			oSU.second();
 		}
 		// we should also process whether the window size changed here
-		if (mWindowSizeChanged)
+		if (mWindowSizeDirty)
 		{
 			// notify shader/cams
-			SetProjectionMatToAllShadersFromFirstCam_hack();
+			__setProjectionMatToAllShadersFromFirstCam_hack();
 
 			// don't process again
-			mWindowSizeChanged = false;
+			mWindowSizeDirty = false;
 		}
 		// reset timeout length to 0
 		mSlowUpdateTimeout = 0.f;
@@ -546,15 +549,15 @@ void AncientArcher::render()
 
 void AncientArcher::initEngine()
 {
-	ResetEngine();
+	resetEngine();
 
-	initFromEngine();
+	initDisplayFromEngine();
 
-	SetReshapeWindowHandler();
+	setReshapeWindowHandler();
 
-	SetCurorPosToStandardCalc();
+	setCurorPosToStandardCalc();
 
-	SetScrollWheelHandler();
+	setScrollWheelHandler();
 
 	// Init OpenGL
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))  // init glad (for opengl context) -- must be after initGet()
@@ -564,7 +567,7 @@ void AncientArcher::initEngine()
 	}
 }
 
-void AncientArcher::ResetEngine() noexcept
+void AncientArcher::resetEngine() noexcept
 {
 	//clear all vectors
 	mCameras.clear();
@@ -591,7 +594,7 @@ void AncientArcher::ResetEngine() noexcept
 	mDeltaTime = 0.f;
 }
 
-void AncientArcher::SetProjectionMatToAllShadersFromFirstCam_hack()
+void AncientArcher::__setProjectionMatToAllShadersFromFirstCam_hack()
 {
 	// set proj matries hack from first cam
 	for (auto& shad : mShaders)
@@ -621,36 +624,36 @@ void AncientArcher::SetProjectionMatToAllShadersFromFirstCam_hack()
 
 //---------------------------------------------------------------------------------------
 // RESHAPE WINDOW CALLBACK SETUP
-void AncientArcher::reshapeWindowHandler(GLFWwindow* window, int width, int height)
+void AncientArcher::ReshapeWindowHandler(GLFWwindow* window, int width, int height)
 {
 	mWindowWidth = width;
 	mWindowHeight = height;
 	glViewport(0, 0, mWindowWidth, mWindowHeight);
-	mWindowSizeChanged = true;
+	mWindowSizeDirty = true;
 #ifdef _DEBUG
 	std::cout << "window reshape called\n";
 #endif
 }
 extern "C" void reshapeCallback(GLFWwindow * window, int w, int h)
 {
-	Engine->reshapeWindowHandler(window, w, h);
+	Engine->ReshapeWindowHandler(window, w, h);
 }
-void AncientArcher::SetReshapeWindowHandler() noexcept
+void AncientArcher::setReshapeWindowHandler() noexcept
 {
 	::glfwSetFramebufferSizeCallback(mWindow, reshapeCallback);
 }
 
 //---------------------------------------------------------------------------------------
 // PERSPECTIVE MOUSE REPORTING CALLBACK SETUP
-void AncientArcher::perspectiveMouseHandler(GLFWwindow* window, float xpos, float ypos)
+void AncientArcher::PerspectiveMouseHandler(GLFWwindow* window, float xpos, float ypos)
 {
 	perspectiveMouseMovement(xpos, ypos);
 }
 extern "C" void perspectiveMouseCallback(GLFWwindow * window, double xpos, double ypos)
 {
-	Engine->perspectiveMouseHandler(window, (float)xpos, (float)ypos);
+	Engine->PerspectiveMouseHandler(window, (float)xpos, (float)ypos);
 }
-void AncientArcher::SetCurorPosToPerspectiveCalc() noexcept
+void AncientArcher::setCurorPosToPerspectiveCalc() noexcept
 {
 	mRenewFPP = true;
 	::glfwSetCursorPosCallback(mWindow, perspectiveMouseCallback);
@@ -659,15 +662,15 @@ void AncientArcher::SetCurorPosToPerspectiveCalc() noexcept
 
 //---------------------------------------------------------------------------------------
 // STANDARD MOUSE REPORTING CALLBACK SETUP
-void AncientArcher::standardMouseHandler(GLFWwindow* window, float xpos, float ypos)
+void AncientArcher::StandardMouseHandler(GLFWwindow* window, float xpos, float ypos)
 {
 	standardMouseMovement(xpos, ypos);
 }
 extern "C" void standardMouseCallback(GLFWwindow * window, double xpos, double ypos)
 {
-	Engine->standardMouseHandler(window, (float)xpos, (float)ypos);
+	Engine->StandardMouseHandler(window, (float)xpos, (float)ypos);
 }
-void AncientArcher::SetCurorPosToStandardCalc() noexcept
+void AncientArcher::setCurorPosToStandardCalc() noexcept
 {
 	::glfwSetCursorPosCallback(mWindow, standardMouseCallback);
 	mMouseReporting = MouseReporting::STANDARD;
@@ -718,15 +721,15 @@ void AncientArcher::standardMouseMovement(float xpos, float ypos)
 
 //---------------------------------------------------------------------------------------
 // MOUSE SCROLL REPROTING CALLBACK SETUP
-void AncientArcher::scrollHandler(GLFWwindow* window, float xpos, float ypos)
+void AncientArcher::ScrollHandler(GLFWwindow* window, float xpos, float ypos)
 {
 	mouseScrollWheelMovement(xpos, ypos);
 }
 extern "C" void scrollCallback(GLFWwindow * window, double xpos, double ypos)
 {
-	Engine->scrollHandler(window, (float)xpos, (float)ypos);
+	Engine->ScrollHandler(window, (float)xpos, (float)ypos);
 }
-void AncientArcher::SetScrollWheelHandler() noexcept
+void AncientArcher::setScrollWheelHandler() noexcept
 {
 	::glfwSetScrollCallback(mWindow, scrollCallback);
 }
