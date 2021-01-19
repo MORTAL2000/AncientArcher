@@ -50,9 +50,9 @@ Camera::Camera(int width, int height)
 
 	mPosition = glm::vec3(0);
 	mFieldOfView = 60.f;
-	mYaw = -90.f;
+	mYaw = 0.f;
 	mPitch = 0.f;
-	mMaxRenderDistance = 100.f;
+	mMaxRenderDistance = 2000.f;
 	mProjectionChanged = false;
 	mOrthoFieldSize = glm::vec4(-1, 1, -1, 1);
 	mRenderProjection = RenderProjection::PERSPECTIVE;
