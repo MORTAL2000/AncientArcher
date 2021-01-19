@@ -60,7 +60,6 @@ public:
 	void SetWindowSize(const char to) noexcept;
 	void SetWindowTitle(const char* name) noexcept;
 
-	void CloseWindow() noexcept;
 
 	//void ReshapeWindowHandler(GLFWwindow* window, int width, int height);
 	//void PerspectiveMouseHandler(GLFWwindow* window, float xpos, float ypos);
@@ -68,6 +67,9 @@ public:
 	//void ScrollHandler(GLFWwindow* window, float xpos, float ypos);
 
 protected:
+
+	// hold for engine to change back to false so it can know if it should resize the camera viewports
+	bool mWindowSizeDirty = false;
 
 	void toggleFullScreen() noexcept;
 	void setWindowToFullscreen() noexcept;
@@ -80,6 +82,9 @@ protected:
 
 	void clearBackBuffer() const noexcept;
 	void swapWindowBuffers() const noexcept;
+
+	void closeWindow() noexcept;
+
 
 	//void setReshapeWindowHandler() noexcept;
 	//void SetResizeWindowHandler() noexcept;
@@ -97,9 +102,6 @@ protected:
 	int mXPos = 0, mYPos = 0;
 	glm::vec3 mWindowClearColor = glm::vec3(0.35f, 0.15f, 0.35f);
 	GLFWwindow* mWindow = nullptr;
-
-	// hold for engine to change back to false so it can know if it should resize the camera viewports
-	bool mWindowSizeDirty = false;
 
 private:
 

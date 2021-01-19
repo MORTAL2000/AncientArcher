@@ -53,6 +53,8 @@ class AncientArcher : public Display, Controls
 public:
 	static AncientArcher* Get();
 	int Run();
+	void Shutdown() noexcept;
+	void SoftReset();
 
 public:
 	const Camera& GetCamera(int camId) const;
@@ -109,6 +111,7 @@ public:
 
 private:
 	AncientArcher();
+
 
 	float mLastFrameTime;                  ///< keeps track of the previous frame's time
 	float mCurrentFrameTime;               ///< keeps track of the current frame's time

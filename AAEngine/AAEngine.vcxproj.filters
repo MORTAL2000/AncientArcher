@@ -93,6 +93,9 @@
     <ClInclude Include="include\AncientArcher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Window\DisplayCallbacks.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\vendor\stb\stb_image.cpp">

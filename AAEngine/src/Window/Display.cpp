@@ -275,7 +275,7 @@ void Display::keepWindowOpen() noexcept
 	glfwSetWindowShouldClose(mWindow, 0);
 }
 
-void Display::CloseWindow() noexcept
+void Display::closeWindow() noexcept
 {
 	glfwSetWindowShouldClose(mWindow, 1);
 }
@@ -286,6 +286,7 @@ void Display::initGLFW() noexcept
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+
 	// with core profile, you have to create and manage your own VAO's, no default given
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
@@ -328,7 +329,9 @@ void Display::initDisplayFromEngine()
 
 void Display::resetStateDataToDefault()
 {
-	mWindowIsFullScreen = false;
+	if (mWindowIsFullScreen)
+		toggleFullScreen();
+	//mWindowIsFullScreen = false;
 	mWindowWidth = 800, mWindowHeight = 600;
 	mXPos = mYPos = 0;
 	mWindowClearColor = glm::vec3(0.35f, 0.15f, 0.35f);

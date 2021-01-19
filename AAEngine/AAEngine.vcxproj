@@ -93,6 +93,7 @@
     <ClInclude Include="include\Scene\InstanceDetails.h" />
     <ClInclude Include="include\Sound\SoundListener.h" />
     <ClInclude Include="include\Sound\LongSound.h" />
+    <ClInclude Include="include\Window\DisplayCallbacks.h" />
     <ClInclude Include="KHR\khrplatform.h" />
     <ClInclude Include="include\Scene\SceneLoader.h" />
     <ClInclude Include="include\AncientArcher.h" />
