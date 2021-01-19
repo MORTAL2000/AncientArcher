@@ -41,9 +41,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
-#include "../../include/Scene/SceneLoader.h"
-#include "../../include/Scene/Vertex.h"
-#include "../../include/Scene/TexLoader.h"
+#include "../../../include/Renderer/OpenGL/SceneLoader.h"
+#include "../../../include/Renderer/Vertex.h"
+#include "../../../include/Renderer/OpenGL/TexLoader.h"
+
+
+
 namespace AA
 {
 SceneLoader* SceneLoader::getSceneLoader() {

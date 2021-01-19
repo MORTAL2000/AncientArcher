@@ -84,6 +84,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\Renderer\OpenGL\OGLLight.h" />
     <ClInclude Include="include\Scene\ColliderSphere.h" />
     <ClInclude Include="include\Scene\Camera.h" />
     <ClInclude Include="include\Scene\ColliderBox.h" />
@@ -95,16 +96,16 @@
     <ClInclude Include="include\Sound\LongSound.h" />
     <ClInclude Include="include\Window\DisplayCallbacks.h" />
     <ClInclude Include="KHR\khrplatform.h" />
-    <ClInclude Include="include\Scene\SceneLoader.h" />
+    <ClInclude Include="include\Renderer\OpenGL\SceneLoader.h" />
     <ClInclude Include="include\AncientArcher.h" />
-    <ClInclude Include="include\Scene\MeshDrawInfo.h" />
-    <ClInclude Include="include\Scene\ModelHeader.h" />
-    <ClInclude Include="include\Scene\OGLGraphics.h" />
-    <ClInclude Include="include\Scene\Lights.h" />
-    <ClInclude Include="include\Scene\OGLShader.h" />
-    <ClInclude Include="include\Scene\Skybox.h" />
-    <ClInclude Include="include\Scene\TexLoader.h" />
-    <ClInclude Include="include\Scene\Vertex.h" />
+    <ClInclude Include="include\Renderer\MeshDrawInfo.h" />
+    <ClInclude Include="include\Renderer\ModelHeader.h" />
+    <ClInclude Include="include\Renderer\OpenGL\OGLGraphics.h" />
+    <ClInclude Include="include\Renderer\Lights.h" />
+    <ClInclude Include="include\Renderer\OpenGL\OGLShader.h" />
+    <ClInclude Include="include\Renderer\OpenGL\Skybox.h" />
+    <ClInclude Include="include\Renderer\OpenGL\TexLoader.h" />
+    <ClInclude Include="include\Renderer\Vertex.h" />
     <ClInclude Include="include\Controls\Controls.h" />
     <ClInclude Include="include\Window\Display.h" />
     <ClInclude Include="include\Controls\Input.h" />
@@ -122,15 +123,15 @@
     <ClCompile Include="src\Scene\ColliderBox.cpp" />
     <ClCompile Include="src\Scene\CollisionHandler.cpp" />
     <ClCompile Include="src\Scene\GameObject.cpp" />
-    <ClCompile Include="src\Scene\SceneLoader.cpp" />
+    <ClCompile Include="src\Renderer\OpenGL\SceneLoader.cpp" />
     <ClCompile Include="src\AncientArcher.cpp" />
-    <ClCompile Include="src\Scene\MeshDrawInfo.cpp" />
-    <ClCompile Include="src\Scene\OGLGraphics.cpp" />
-    <ClCompile Include="src\Scene\OGLShader.cpp" />
-    <ClCompile Include="src\Scene\Skybox.cpp" />
+    <ClCompile Include="src\Renderer\MeshDrawInfo.cpp" />
+    <ClCompile Include="src\Renderer\OpenGL\OGLGraphics.cpp" />
+    <ClCompile Include="src\Renderer\OpenGL\OGLShader.cpp" />
+    <ClCompile Include="src\Renderer\OpenGL\Skybox.cpp" />
     <ClCompile Include="src\vendor\stb\stb_image.cpp" />
-    <ClCompile Include="src\Scene\TexLoader.cpp" />
-    <ClCompile Include="src\Scene\Vertex.cpp" />
+    <ClCompile Include="src\Renderer\OpenGL\TexLoader.cpp" />
+    <ClCompile Include="src\Renderer\Vertex.cpp" />
     <ClCompile Include="src\Controls\Controls.cpp" />
     <ClCompile Include="src\Window\Display.cpp" />
     <ClCompile Include="src\Window\DisplayCallbacks.cpp" />

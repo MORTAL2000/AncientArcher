@@ -31,12 +31,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ----------------------------------------------------------------------
 */
 #include "../../include/Scene/GameObject.h"
-#include "../../include/Scene/OGLGraphics.h"
+#include "../../include/Renderer/OpenGL/OGLGraphics.h"
 #include "../../include/Scene/Camera.h"
-#include "../../include/Scene/SceneLoader.h"
+
 #ifdef _DEBUG
 #include <iostream>
 #endif
+#include "../../include/Renderer/OpenGL/SceneLoader.h"
 
 namespace AA
 {

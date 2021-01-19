@@ -1,5 +1,5 @@
 /*
-Skybox
+OGLGraphics
 ----------------------------------------------------------------------
 Copyright (c) 2019-2020, Matthew Early matthewjearly@gmail.com
 All rights reserved.
@@ -31,40 +31,28 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ----------------------------------------------------------------------
 */
 #pragma once
-#include "Camera.h"
-#include "OGLShader.h"
-#include <vector>
-#include <string>
-#include <memory>
 #include <glm/glm.hpp>
-
+#include <vector>
+#include <glad/glad.h>
+#include <string>
+//#include "GameObject.h"
+#include "OGLShader.h"
+#include "../MeshDrawInfo.h"
+#include "../../Scene/InstanceDetails.h"
 namespace AA
 {
-class Skybox
+class OGLGraphics
 {
 public:
 
-	//Skybox(std::shared_ptr<Camera>& viewport);
-	//Skybox(std::vector<std::string> incomingSkymapFiles);
+	static OGLGraphics* getInstance();
 
-	Skybox(std::vector<std::string> incomingSkymapFiles, bool useInternalShaders = true, const char* vertpath = "", const char* fragpath = "");
-
-	void render(const Camera& cam);
-
-	//void render(const AAOGLShader& shader);
-
-	// to be manually called as needed
-	void setProjectionMatrix(const Camera& cam);
+	friend class GameObject;
 
 private:
 
-	void loadSkybox();
-	void loadProjectionMatrix(const Camera& cam);
-	void loadViewMatrix(const Camera& cam);
+	void Render(const std::vector<MeshDrawInfo>& meshes, const std::vector<InstanceDetails>& details, const OGLShader& modelShader);
 
-	unsigned int mSkyboxVAO = 0;
-	unsigned int cubemapTexture = 0;
-	std::unique_ptr<OGLShader> skyboxShader;
-	//std::shared_ptr<Camera>& mCamera;
+	OGLGraphics();
 };
 }  // end namespace AA

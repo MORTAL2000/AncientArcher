@@ -35,7 +35,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "Controls/Input.h"
 #include "Controls/Controls.h"
 #include "Scene/Camera.h"
-#include "Scene/Skybox.h"
+#include "Renderer/OpenGL/Skybox.h"
 #include "Scene/GameObject.h"
 #include <vector>
 #include <functional>
@@ -99,6 +99,11 @@ public:
 	void SetProjectionMatrix(int shadId, int camId);
 	void SetCursorToEnabled(bool isHardwareRendered = false);
 
+	void setReshapeWindowHandler() noexcept;
+	void setCurorPosToPerspectiveCalc() noexcept;
+	void setCurorPosToStandardCalc() noexcept;
+	void setScrollWheelHandler() noexcept;
+
 	//void SetCursorToDisabled();
 	//void SetToPerspectiveMouseHandling();
 	//void SetToStandardMouseHandling();
@@ -108,6 +113,8 @@ public:
 	void PerspectiveMouseHandler(GLFWwindow* window, float xpos, float ypos);
 	void StandardMouseHandler(GLFWwindow* window, float xpos, float ypos);
 	void ScrollHandler(GLFWwindow* window, float xpos, float ypos);
+
+
 
 private:
 	AncientArcher();
@@ -148,10 +155,7 @@ private:
 	void initEngine();
 	void resetEngine() noexcept;
 
-	void setReshapeWindowHandler() noexcept;
-	void setCurorPosToPerspectiveCalc() noexcept;
-	void setCurorPosToStandardCalc() noexcept;
-	void setScrollWheelHandler() noexcept;
+
 
 	void standardMouseMovement(float xpos, float ypos);
 

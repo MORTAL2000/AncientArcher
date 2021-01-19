@@ -37,9 +37,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <memory>
 #include <string>
 #include "Camera.h"
-#include "OGLShader.h"
+#include "../Renderer/OpenGL/OGLShader.h"
 #include "InstanceDetails.h"
-#include "MeshDrawInfo.h"
+#include "../Renderer/MeshDrawInfo.h"
 #include "ColliderSphere.h"
 namespace AA
 {
